@@ -33,7 +33,6 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            script: |
             cd ~/devops-go-app || git clone https://github.com/sonnyranger/devops-go-app.git ~/devops-go-app
             cd ~/devops-go-app
             git pull
