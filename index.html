@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Title}}</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 20px auto; }
+        form { margin-bottom: 20px; }
+        input[type="text"] { padding: 10px; width: 70%; }
+        button { padding: 10px; }
+        ul { list-style-type: none; padding: 0; }
+        li { background: #eee; margin: 5px 0; padding: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>{{.Title}}</h1>
+    <form action="/add" method="POST">
+        <input type="text" name="task" placeholder="Новая задача" required>
+        <button type="submit">Добавить</button>
+    </form>
+    <ul>
+        {{range .Todos}}
+        <li>{{.Item}}</li>
+        {{else}}
+        <li>Список пуст</li>
+        {{end}}
+    </ul>
+</body>
+</html>
