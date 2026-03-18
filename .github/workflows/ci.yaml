@@ -23,7 +23,7 @@ jobs:
         run: go test ./...
 
       - name: Build Docker images
-        run: docker-compose build
+        run: docker compose build
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.0
@@ -35,4 +35,4 @@ jobs:
             mkdir -p ~/devops-go-app
             cd ~/devops-go-app
             git pull || git clone https://github.com/${{ github.repository }} .
-            docker-compose up -d --build
+            docker compose up -d --build
