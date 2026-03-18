@@ -1,43 +1,47 @@
-name: CI/CD Pipeline
+name: CI/CD
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
+      # 1. Клонируем репозиторий (GitHub runner сам делает checkout)
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      # 2. Настройка SSH для подключения к серверу
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.1
         with:
-          go-version: 1.24
+          ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Build Docker image
-        run: docker build -t todo-app .
-
-      - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@v1.0.0
+      # 3. Подключаемся к серверу и деплоим через docker compose V2
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
+          port: 22
           key: ${{ secrets.SSH_KEY }}
           script: |
+            # Создаём папку для проекта
             mkdir -p ~/devops-go-app
             cd ~/devops-go-app
-            git pull || git clone https://github.com/${{ github.repository }} .
 
-            # Проверяем наличие docker-compose
-            if command -v docker-compose > /dev/null 2>&1; then
-              echo "Using docker-compose V1"
-              docker-compose build
-              docker-compose up -d
+            # Обновляем код или клонируем
+            if [ -d ".git" ]; then
+              git pull
             else
-              echo "Using docker compose V2"
-              docker compose build
-              docker compose up -d
+              git clone https://github.com/sonnyranger/devops-go-app .
             fi
+
+            # Строим и поднимаем контейнеры через Docker Compose V2
+            docker compose build
+            docker compose up -d
+
+            # Выводим статус контейнеров для проверки
+            docker compose ps
