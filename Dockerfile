@@ -2,14 +2,12 @@
 FROM golang:1.24-alpine AS builder
 WORKDIR /app
 
-# Если появятся зависимости, создадим go.mod/go.sum
+# Скачиваем зависимости
 COPY go.mod go.sum ./
 RUN go mod download
 
 # Копируем весь код
 COPY . .
-
-# Собираем бинарник
 RUN go build -o todo-app main.go
 
 # Stage 2: Run
@@ -20,5 +18,4 @@ COPY --from=builder /app/todo-app .
 COPY index.html .
 
 EXPOSE 8080
-
 CMD ["./todo-app"]

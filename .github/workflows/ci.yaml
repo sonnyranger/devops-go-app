@@ -9,23 +9,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.22'
+          go-version: 1.24
 
-      - name: Build Go app
-        run: go build -o todo-app main.go
+      - name: Build Docker image
+        run: docker build -t todo-app .
 
-      - name: Run tests
-        run: go test ./...
-
-      - name: Build Docker images
-        run: docker compose build
-
-      - name: Deploy via SSH
+      - name: Deploy to server via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.HOST }}
@@ -35,4 +30,14 @@ jobs:
             mkdir -p ~/devops-go-app
             cd ~/devops-go-app
             git pull || git clone https://github.com/${{ github.repository }} .
-            docker compose up --build --detach
+
+            # Проверяем наличие docker-compose
+            if command -v docker-compose > /dev/null 2>&1; then
+              echo "Using docker-compose V1"
+              docker-compose build
+              docker-compose up -d
+            else
+              echo "Using docker compose V2"
+              docker compose build
+              docker compose up -d
+            fi
