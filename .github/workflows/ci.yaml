@@ -15,9 +15,9 @@ jobs:
 
       # 2. Настройка SSH для подключения к серверу
       - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.8.1
+        uses: webfactory/ssh-agent@v0.8
         with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+           ssh-private-key: ${{ secrets.SSH_KEY }}
 
       # 3. Подключаемся к серверу и деплоим через docker compose V2
       - name: Deploy to server
