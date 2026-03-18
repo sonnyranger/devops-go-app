@@ -33,8 +33,9 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /root/devops-go-app || git clone https://github.com/sonnyranger/devops-go-app.git
-            cd devops-go-app
+            script: |
+            cd ~/devops-go-app || git clone https://github.com/sonnyranger/devops-go-app.git ~/devops-go-app
+            cd ~/devops-go-app
             git pull
             docker build -t devops-go-app .
             docker stop app || true
