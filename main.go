@@ -5,7 +5,23 @@ import (
 	"log"
 	"net/http"
 	"sync"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+var (
+	tasksAdded = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "todo_tasks_added_total",
+			Help: "Total number of tasks added",
+		},
+	)
+)
+
+func init() {
+	prometheus.MustRegister(tasksAdded)
+}
 
 // Todo структура задачи
 type Todo struct {
@@ -51,11 +67,13 @@ func addHandler(w http.ResponseWriter, r *http.Request) {
 		todos = append(todos, Todo{Item: task})
 		mu.Unlock()
 	}
+	tasksAdded.Inc()
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func main() {
+	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/add", addHandler)
 
