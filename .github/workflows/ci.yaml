@@ -2,14 +2,14 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: ["main"]
+    branches: [main]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Go
@@ -17,14 +17,14 @@ jobs:
         with:
           go-version: '1.22'
 
-      - name: Install dependencies
-        run: go mod download
+      - name: Build Go app
+        run: go build -o todo-app main.go
 
       - name: Run tests
-        run: go test ./... || true
+        run: go test ./...
 
       - name: Build Docker image
-        run: docker build -t devops-go-app .
+        run: docker build -t todo-app .
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.0
@@ -33,10 +33,10 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd ~/devops-go-app || git clone https://github.com/sonnyranger/devops-go-app.git ~/devops-go-app
+            mkdir -p ~/devops-go-app
             cd ~/devops-go-app
-            git pull
-            docker build -t devops-go-app .
-            docker stop app || true
-            docker rm app || true
-            docker run -d -p 80:8080 --name app devops-go-app
+            git pull || git clone https://github.com/${{ github.repository }} .
+            docker build -t todo-app .
+            docker stop todo-app || true
+            docker rm todo-app || true
+            docker run -d -p 80:8080 --name todo-app todo-app
