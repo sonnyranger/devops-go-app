@@ -33,10 +33,19 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            # Создаём директорию для проекта
             mkdir -p ~/devops-go-app
             cd ~/devops-go-app
+
+            # Клонируем или обновляем проект
             git pull || git clone https://github.com/${{ github.repository }} .
+
+            # Билдим Docker
             docker build -t todo-app .
+
+            # Останавливаем старый контейнер
             docker stop todo-app || true
             docker rm todo-app || true
-            docker run -d -p 80:8080 --name todo-app todo-app
+
+            # Запускаем новый с авто-рестартом
+            docker run -d -p 80:8080 --name todo-app --restart always todo-app
