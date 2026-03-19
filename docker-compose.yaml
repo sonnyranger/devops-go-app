@@ -23,6 +23,7 @@ services:
     image: grafana/grafana
     container_name: grafana
     environment:
+      - GF_SERVER_HTTP_ADDR=0.0.0.0
       - GF_SERVER_ROOT_URL=http://158.160.215.203/grafana/
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
     ports:
