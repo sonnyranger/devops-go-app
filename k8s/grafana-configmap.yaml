@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+  namespace: devops-go-app
+data:
+  grafana.ini: |
+    [server]
+    http_port = 3000
