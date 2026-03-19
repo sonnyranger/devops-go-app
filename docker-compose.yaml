@@ -24,6 +24,8 @@ services:
     environment:
     - GF_SERVER_ROOT_URL=http://158.160.215.203/grafana/
     - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    ports:
+    - "3000:3000"
 
   node-exporter:
     image: prom/node-exporter
