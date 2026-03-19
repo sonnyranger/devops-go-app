@@ -24,10 +24,14 @@ services:
     container_name: grafana
     environment:
       - GF_SERVER_HTTP_ADDR=0.0.0.0
+      - GF_SERVER_HTTP_PORT=3000
+      - GF_SERVER_DOMAIN=158.160.215.203
       - GF_SERVER_ROOT_URL=http://158.160.215.203/grafana/
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
     ports:
       - "3000:3000"
+    networks:
+      - app-network
 
   node-exporter:
     image: prom/node-exporter
