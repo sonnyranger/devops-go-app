@@ -8,20 +8,20 @@ services:
       - "8080:8080"
 
   prometheus:
-  image: prom/prometheus
-  container_name: prometheus
-  command:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
     - '--config.file=/etc/prometheus/prometheus.yml'
     - '--web.external-url=/prometheus/'
-  volumes:
+    volumes:
     - ./prometheus.yml:/etc/prometheus/prometheus.yml
-  ports:
+    ports:
     - "9090:9090"
 
   grafana:
-  image: grafana/grafana
-  container_name: grafana
-  environment:
+    image: grafana/grafana
+    container_name: grafana
+    environment:
     - GF_SERVER_ROOT_URL=http://158.160.215.203/grafana/
     - GF_SERVER_SERVE_FROM_SUB_PATH=true
 
